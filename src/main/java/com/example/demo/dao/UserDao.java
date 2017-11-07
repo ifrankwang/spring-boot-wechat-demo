@@ -1,7 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.model.Device;
-import com.example.demo.model.User;
+import com.example.demo.model.*;
 import com.example.demo.repo.UserDslRepo;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import java.util.List;
 public class UserDao {
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
     private final JPAQueryFactory query;
-    private final QUser qUser;
+    private final QAppUser qUser;
     private final QDevice qDevice;
     private final QUsersDevice qUsersDevice;
     private final UserDslRepo userRepo;
@@ -29,7 +28,7 @@ public class UserDao {
             EntityManager manager,
             UserDslRepo userRepo) {
         query = new JPAQueryFactory(manager);
-        qUser = QUser.user;
+        qUser = QAppUser.appUser;
         qDevice = QDevice.device;
         qUsersDevice = QUsersDevice.usersDevice;
         this.userRepo = userRepo;
@@ -40,7 +39,7 @@ public class UserDao {
      *
      * @param user 用户信息
      */
-    public void saveUser(User user) {
+    public void saveUser(AppUser user) {
         userRepo.save(user);
     }
 
@@ -49,7 +48,7 @@ public class UserDao {
      *
      * @return 用户信息列表
      */
-    public List<User> findUsers() {
+    public List<AppUser> findUsers() {
         return userRepo.findAll();
     }
 
@@ -59,8 +58,8 @@ public class UserDao {
      * @param expression 关键词
      * @return 用户信息列表
      */
-    public List<User> findUsersNameLike(String expression) {
-        return (List<User>) userRepo.findAll(qUser.name.contains(expression));
+    public List<AppUser> findUsersNameLike(String expression) {
+        return (List<AppUser>) userRepo.findAll(qUser.name.contains(expression));
     }
 
     /**
@@ -69,7 +68,7 @@ public class UserDao {
      * @param id 用户 id
      * @return 用户信息
      */
-    public User findUserById(int id) {
+    public AppUser findUserById(int id) {
         return userRepo.findById(id);
     }
 
@@ -79,8 +78,8 @@ public class UserDao {
      * @param id 用户 id
      * @return 带有设备列表的用户信息
      */
-    public User findUserWithDevicesById(int id) {
-        User user = userRepo.findById(id);
+    public AppUser findUserWithDevicesById(int id) {
+        AppUser user = userRepo.findById(id);
 
         log.info(user.toString());
         log.info(user.getDevices().toString());
@@ -95,11 +94,11 @@ public class UserDao {
      *
      * @return 带有设备列表的用户信息列表
      */
-    public List<User> findUserWithDevices() {
-        List<User> users = query.selectFrom(qUser)
+    public List<AppUser> findUserWithDevices() {
+        List<AppUser> users = query.selectFrom(qUser)
                 .fetch();
 
-        for (User user : users) {
+        for (AppUser user : users) {
             List<Device> devices = query.selectFrom(qDevice)
                     .leftJoin(qUsersDevice)
                     .on(qDevice.id.eq(qUsersDevice.deviceId))
@@ -119,7 +118,7 @@ public class UserDao {
      * @param name 用户名
      * @return 用户信息
      */
-    public List<User> findUsersByName(String name) {
+    public List<AppUser> findUsersByName(String name) {
         return userRepo.findByName(name);
     }
 
@@ -130,7 +129,7 @@ public class UserDao {
      * @param device 设备
      */
     public void addDeviceToUser(int userId, Device device) {
-        User user = userRepo.findById(userId);
+        AppUser user = userRepo.findById(userId);
         user.getDevices().add(device);
     }
 }

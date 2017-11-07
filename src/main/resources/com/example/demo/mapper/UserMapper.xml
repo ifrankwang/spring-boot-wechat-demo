@@ -3,7 +3,7 @@
 <!-- MyBatis *Mapper.xml 示例 -->
 <mapper namespace="com.example.demo.mapper.UserMapper">
     <!-- 返回对象的转换 -->
-    <resultMap id="User" type="com.example.demo.model.User">
+    <resultMap id="User" type="com.example.demo.model.AppUser">
         <id column="id" property="id" javaType="int" jdbcType="INTEGER"/>
         <result column="name" property="name" javaType="String" jdbcType="VARCHAR"/>
         <result column="gender" property="gender" javaType="String" jdbcType="VARCHAR"/>
@@ -12,9 +12,9 @@
     <!-- 获取所有用户信息 -->
     <select id="findAll" resultMap="User">
         SELECT
-            id,
-            name,
-            gender
-        FROM user
+            `id`,
+            `name`,
+            `gender`
+        FROM `user`
     </select>
 </mapper>

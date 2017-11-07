@@ -1,10 +1,11 @@
-package com.example.demo;
+package com.example.demo.config;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -27,16 +28,11 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.demo.web"))
-                .paths(PathSelectors.any())
+                .paths(paths())
                 .build();
     }
 
-    /**
-     * 获取API的基本信息
-     *
-     * @return ApiInfo
-     */
+    // 获取API的基本信息
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Swagger2 测试程序")
@@ -44,5 +40,26 @@ public class Swagger2Config {
                 .contact("王小明")
                 .version("1.0")
                 .build();
+    }
+
+    // 需要展示或隐藏的API路径
+    private Predicate<String> paths() {
+        return and(regex("/.*"),
+                not("/error"),
+                not("/application.*"),
+                not("/mobile/echo.*"),
+                not("/mobile/session.*"));
+    }
+
+    private Predicate<String> regex(String regex) {
+        return PathSelectors.regex(regex);
+    }
+
+    private Predicate<String> and(Predicate<String>... predicates) {
+        return Predicates.and(predicates);
+    }
+
+    private Predicate<String> not(String regex) {
+        return Predicates.not(regex(regex));
     }
 }

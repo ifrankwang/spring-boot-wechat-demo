@@ -42,10 +42,14 @@ INSERT INTO `device` VALUES ('3', 'iMac');
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `id`     INT(11) NOT NULL AUTO_INCREMENT,
-  `name`   VARCHAR(10)
+  `id`       INT(11) NOT NULL AUTO_INCREMENT,
+  `name`     VARCHAR(10)
            COLLATE utf8_bin DEFAULT NULL,
-  `gender` VARCHAR(6)
+  `username` VARCHAR(10)
+             COLLATE utf8_bin DEFAULT NULL,
+  `password` VARCHAR(10)
+             COLLATE utf8_bin DEFAULT NULL,
+  `gender`   VARCHAR(6)
            COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
@@ -57,8 +61,8 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'Jack', 'male');
-INSERT INTO `user` VALUES ('2', 'Jone', 'female');
+INSERT INTO `user` VALUES ('1', 'Jack', 'jack', 'jack', 'male');
+INSERT INTO `user` VALUES ('2', 'Jone', 'jone', 'jone', 'female');
 
 -- ----------------------------
 -- Table structure for user_device

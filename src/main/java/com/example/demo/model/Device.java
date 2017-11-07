@@ -20,7 +20,7 @@ public class Device {
             joinColumns = @JoinColumn(name = "device_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> users = new ArrayList<>();
+    private List<AppUser> users = new ArrayList<>();
 
     public Device() {
     }
@@ -45,11 +45,11 @@ public class Device {
         this.name = name;
     }
 
-    public List<User> getUsers() {
+    public List<AppUser> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(List<AppUser> users) {
         this.users = users;
     }
 

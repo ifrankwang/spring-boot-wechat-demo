@@ -18,23 +18,23 @@ public class MethodLogger {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
-     * 在方法执行前log方法名和参数
+     * 在Controller和Service方法执行前log方法名和参数
      *
      * @param joinPoint 切入点
      */
-    @Before("execution(* com.example.demo..*.*(..))")
+    @Before("execution(* com.example.demo..*.*Controller.*(..)) || execution(* com.example.demo.service..*.*(..))")
     public void logMethodBefore(JoinPoint joinPoint) {
-        log.info(String.format("Start method: %s", getMethodStr(joinPoint)));
+        log.info(String.format("开始执行方法: %s", getMethodStr(joinPoint)));
     }
 
     /**
-     * 在方法执行后log方法名和参数
+     * 在Controller和Service方法执行后log方法名和参数
      *
      * @param joinPoint 切入点
      */
-    @After("execution(* com.example.demo..*.*(..))")
+    @After("execution(* com.example.demo..*.*Controller.*(..)) || execution(* com.example.demo.service..*.*(..))")
     public void logMethodAfter(JoinPoint joinPoint) {
-        log.info(String.format("End method: %s", getMethodStr(joinPoint)));
+        log.info(String.format("结束执行方法: %s", getMethodStr(joinPoint)));
     }
 
     /**

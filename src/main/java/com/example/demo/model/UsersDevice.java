@@ -46,4 +46,13 @@ public class UsersDevice {
     public void setDeviceId(int deviceId) {
         this.deviceId = deviceId;
     }
+
+    @Override
+    public String toString() {
+        return "UsersDevice{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", deviceId=" + deviceId +
+                '}';
+    }
 }

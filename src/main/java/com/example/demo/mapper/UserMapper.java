@@ -1,6 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.model.User;
+import com.example.demo.model.AppUser;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,6 +18,6 @@ public interface UserMapper {
      *
      * @return 用户信息列表
      */
-    List<User> findAll();
+    List<AppUser> findAll();
 
 }
