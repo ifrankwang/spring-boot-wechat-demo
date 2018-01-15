@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- MyBatis *Mapper.xml 示例 -->
-<mapper namespace="com.example.demo.mapper.UserMapper">
-    <!-- 返回对象的转换 -->
-    <resultMap id="User" type="com.example.demo.model.AppUser">
-        <id column="id" property="id" javaType="int" jdbcType="INTEGER"/>
-        <result column="name" property="name" javaType="String" jdbcType="VARCHAR"/>
-        <result column="gender" property="gender" javaType="String" jdbcType="VARCHAR"/>
-    </resultMap>
-
+<mapper namespace="me.frank.spring.boot.wechat.mapper.UserMapper">
     <!-- 获取所有用户信息 -->
-    <select id="findAll" resultMap="User">
+    <select id="findAll" resultMap="me.frank.spring.boot.wechat.entity.AppUser">
         SELECT
             `id`,
             `name`,
