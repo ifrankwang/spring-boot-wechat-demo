@@ -31,7 +31,7 @@ public class WechatSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 // 在此加入不走权限的API地址
-                .antMatchers(TEST_URL, LOGIN_URL, AUTH_FAILED_URL, WECHAT_API).permitAll()
+                .antMatchers(NO_AUTH_URL, ERROR_URL, LOGIN_URL, AUTH_FAILED_URL, WECHAT_API).permitAll()
                 .anyRequest().permitAll()
                 .and()
                 // 身份校验过滤器

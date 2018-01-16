@@ -1,15 +1,16 @@
 package me.frank.spring.boot.wechat.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import me.frank.spring.boot.wechat.entity.AppUser;
+import me.frank.spring.boot.wechat.util.JwtUtil;
 import me.frank.spring.boot.wechat.util.ServletUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -18,12 +19,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 
-import static me.frank.spring.boot.wechat.security.SecurityConst.*;
+import static me.frank.spring.boot.wechat.exception.ServiceException.*;
+import static me.frank.spring.boot.wechat.security.SecurityConst.HEADER_STRING;
+import static me.frank.spring.boot.wechat.security.SecurityConst.TOKEN_PREFIX;
 
 // 登录时会调用的过滤器
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -34,21 +37,30 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response)
             throws AuthenticationException {
+        AppUser user = null;
+
+        // 获取登录参数
         try {
-            // 获取登录参数
-            AppUser user = new ObjectMapper()
+            user = new ObjectMapper()
                     .readValue(request.getInputStream(), AppUser.class);
-            // 校验用户名密码
+        } catch (IOException e) {
+            LOG.warn("\n尝试读取请求参数出错！");
+            ServletUtil.goError(request, response, INVALID_ARGUMENTS);
+            return null;
+        }
+
+        // 校验用户名密码
+        try {
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(),
                             user.getPassword(),
                             Collections.emptyList()
-                    )
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+                    ));
+        } catch (InternalAuthenticationServiceException e) {
+            LOG.warn("\n用户{}不存在！", user.getUsername());
+            ServletUtil.goError(request, response, INVALID_USER);
+            return null;
         }
     }
 
@@ -59,29 +71,25 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain,
                                             Authentication authResult)
             throws IOException, ServletException {
+        LOG.info("\n登陆校验成功！校验信息：{}", authResult);
+
+        final AppUser USER = (AppUser) authResult.getPrincipal();
+        final String USERNAME = USER.getUsername();
         // 生成token
-        String token = Jwts.builder()
-                .setSubject(((User) authResult.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET.getBytes())
-                .compact();
+        final String TOKEN = JwtUtil.genTokenFor(USERNAME);
+
         // 加入回应头中
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
-        // 校验成功后重定向到登陆API中，返回相应数据
-        goToLogin(request, response, true);
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX + TOKEN);
+        chain.doFilter(request, response);
     }
 
     // 登陆校验失败后的操作
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              AuthenticationException failed) {
+        LOG.warn("\n登陆校验失败！密码错误！");
         // 校验失败后重定向到登陆API中，返回相应数据
-        goToLogin(request, response, false);
-    }
-
-    // 重定向
-    private void goToLogin(HttpServletRequest request, HttpServletResponse response, boolean success)
-            throws ServletException, IOException {
-        request.setAttribute("success", success);
-        ServletUtil.forward(request, response, LOGIN_URL);
+        ServletUtil.goError(request, response, INVALID_PASSWORD);
     }
 }

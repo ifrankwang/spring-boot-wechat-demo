@@ -36,8 +36,8 @@ public class Swagger2Config {
     // 获取API的基本信息
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("微信网页服务端")
-                .description("基于Spring-boot开发的微信网页服务端")
+                .title("微信网页开发服务端")
+                .description("基于Spring-boot开发的微信网页开发服务端")
                 .version("1.0")
                 .build();
     }
