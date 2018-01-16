@@ -13,6 +13,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import static me.frank.spring.boot.wechat.security.SecurityConst.HEADER_STRING;
+
 // 切面方法自动代理
 @EnableAspectJAutoProxy
 // 需要扫描的数据库模型类所在的包
@@ -31,7 +33,10 @@ public class ApplicationConfig {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*");
+                registry.addMapping("/**")
+                        .allowCredentials(true)
+                        .allowedOrigins("*")
+                        .allowedHeaders(HEADER_STRING);
             }
         };
     }
