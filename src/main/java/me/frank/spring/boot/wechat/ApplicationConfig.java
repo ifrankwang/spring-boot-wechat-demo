@@ -9,11 +9,12 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static me.frank.spring.boot.wechat.security.SecurityConst.HEADER_STRING;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_STRING;
 
 // 切面方法自动代理
 @EnableAspectJAutoProxy
@@ -21,6 +22,10 @@ import static me.frank.spring.boot.wechat.security.SecurityConst.HEADER_STRING;
 @EntityScan("me.frank.spring.boot.wechat.entity")
 // MyBatis *Mapper.java 文件扫描
 @MapperScan({"me.frank.spring.boot.wechat.mapper"})
+@PropertySource({
+        "classpath:app-wechat-${spring.profiles.active}.properties",
+        "classpath:app-security.properties"
+})
 @SpringBootApplication
 public class ApplicationConfig {
 

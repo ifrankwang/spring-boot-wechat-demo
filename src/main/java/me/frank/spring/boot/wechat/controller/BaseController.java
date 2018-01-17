@@ -5,12 +5,11 @@ import io.swagger.annotations.ApiOperation;
 import me.frank.spring.boot.wechat.dto.AppResponse;
 import me.frank.spring.boot.wechat.entity.AppUser;
 import me.frank.spring.boot.wechat.exception.ServiceException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import me.frank.spring.boot.wechat.service.IWechatService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import static me.frank.spring.boot.wechat.security.SecurityConst.ERROR_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.ERROR_URL;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -18,6 +17,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Api(tags = "暂无归类接口")
 @RestController
 public class BaseController {
+    private final IWechatService wechatService;
+
+    @Autowired
+    public BaseController(IWechatService wechatService) {
+        this.wechatService = wechatService;
+    }
 
     @ApiOperation(
             produces = APPLICATION_JSON_VALUE,
@@ -39,6 +44,15 @@ public class BaseController {
     @RequestMapping(value = "/test", method = {POST, GET})
     public AppResponse<String> authTest(@RequestAttribute AppUser user) {
         return AppResponse.success("Hello " + user.getUsername() + "!");
+    }
+
+    @ApiOperation(
+            produces = APPLICATION_JSON_VALUE,
+            value = "获取微信跳转URL",
+            response = String.class)
+    @GetMapping(value = "/no-auth/get-redirect-url")
+    public AppResponse<String> getRedirectUrl(@RequestParam String url) {
+        return AppResponse.success(wechatService.assembleRedirectUrl(url));
     }
 
     @ApiOperation(

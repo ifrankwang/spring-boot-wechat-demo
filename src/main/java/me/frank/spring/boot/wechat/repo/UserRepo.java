@@ -36,4 +36,12 @@ public interface UserRepo extends JpaRepository<AppUser, Integer>, QueryDslPredi
      * @return 用户信息
      */
     AppUser findByUsername(String username);
+
+    /**
+     * 根据openId获取用户信息
+     *
+     * @param openId 微信openId
+     * @return 用户信息
+     */
+    AppUser findByOpenId(String openId);
 }

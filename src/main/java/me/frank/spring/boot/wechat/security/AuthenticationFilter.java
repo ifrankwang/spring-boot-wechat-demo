@@ -2,7 +2,7 @@ package me.frank.spring.boot.wechat.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.frank.spring.boot.wechat.entity.AppUser;
-import me.frank.spring.boot.wechat.util.JwtUtil;
+import me.frank.spring.boot.wechat.service.IJwtService;
 import me.frank.spring.boot.wechat.util.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +21,18 @@ import java.io.IOException;
 import java.util.Collections;
 
 import static me.frank.spring.boot.wechat.exception.ServiceException.*;
-import static me.frank.spring.boot.wechat.security.SecurityConst.HEADER_STRING;
-import static me.frank.spring.boot.wechat.security.SecurityConst.TOKEN_PREFIX;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 
 // 登录时会调用的过滤器
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final AuthenticationManager authenticationManager;
+    private final IJwtService jwtService;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager,
+                                IJwtService jwtService) {
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -76,8 +78,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         final AppUser USER = (AppUser) authResult.getPrincipal();
         final String USERNAME = USER.getUsername();
         // 生成token
-        final String TOKEN = JwtUtil.genTokenFor(USERNAME);
+        final String TOKEN = jwtService.genTokenFor(USERNAME);
 
+        request.setAttribute(ATTR_USER, USER);
         // 加入回应头中
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + TOKEN);
         chain.doFilter(request, response);

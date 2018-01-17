@@ -6,6 +6,7 @@ public class ServiceException extends RuntimeException {
     public static final ServiceException INVALID_PASSWORD = new ServiceException("密码错误！");
     public static final ServiceException INVALID_ARGUMENTS = new ServiceException("缺少必要参数！");
     public static final ServiceException INVALID_TOKEN = new ServiceException("无效的请求！");
+    public static final ServiceException USER_UNBIND = new ServiceException("用户未绑定！");
     public static final ServiceException UNSUPPORTED_ENCODING = new ServiceException("不支持的编码方式！");
 
     public ServiceException(String message) {

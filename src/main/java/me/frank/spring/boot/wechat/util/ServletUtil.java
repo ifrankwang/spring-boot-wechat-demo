@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static me.frank.spring.boot.wechat.security.SecurityConst.ATTR_ERROR;
-import static me.frank.spring.boot.wechat.security.SecurityConst.ERROR_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.ATTR_ERROR;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.ERROR_URL;
 
 public class ServletUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ServletUtil.class);

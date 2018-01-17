@@ -24,7 +24,7 @@ public class MethodLogger {
      */
     @Before("execution(* me.frank.spring.boot.wechat..*.*Controller.*(..)) || execution(* me.frank.spring.boot.wechat.service..*.*(..))")
     public void logMethodBefore(JoinPoint joinPoint) {
-        log.info(String.format("\n开始执行方法: %s", getMethodStr(joinPoint)));
+        log.info("\n开始执行方法: {}", getMethodStr(joinPoint));
     }
 
     /**
@@ -34,7 +34,7 @@ public class MethodLogger {
      */
     @After("execution(* me.frank.spring.boot.wechat..*.*Controller.*(..)) || execution(* me.frank.spring.boot.wechat.service..*.*(..))")
     public void logMethodAfter(JoinPoint joinPoint) {
-        log.info(String.format("\n结束执行方法: %s", getMethodStr(joinPoint)));
+        log.info("\n结束执行方法: {}", getMethodStr(joinPoint));
     }
 
     /**

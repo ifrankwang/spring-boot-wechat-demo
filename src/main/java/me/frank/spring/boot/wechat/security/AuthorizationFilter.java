@@ -2,7 +2,7 @@ package me.frank.spring.boot.wechat.security;
 
 import me.frank.spring.boot.wechat.entity.AppUser;
 import me.frank.spring.boot.wechat.exception.ServiceException;
-import me.frank.spring.boot.wechat.util.JwtUtil;
+import me.frank.spring.boot.wechat.service.IJwtService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.Asserts;
 import org.slf4j.Logger;
@@ -12,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,15 +20,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static me.frank.spring.boot.wechat.exception.ServiceException.INVALID_TOKEN;
-import static me.frank.spring.boot.wechat.security.SecurityConst.*;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
+    private final UserDetailsService userDetailsService;
+    private final IJwtService jwtService;
 
-    private UserDetailsService userDetailsService;
-
-    public AuthorizationFilter(AuthenticationManager authenticationManager) {
+    public AuthorizationFilter(AuthenticationManager authenticationManager,
+                               UserDetailsService userDetailsService,
+                               IJwtService jwtService) {
         super(authenticationManager);
+        this.userDetailsService = userDetailsService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -38,10 +41,9 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain)
             throws IOException, ServletException {
         final String URI = request.getRequestURI();
+        final String HEADER = request.getHeader(HEADER_STRING);
 
         LOG.info("\n校验用户访问{}权限...", URI);
-
-        final String HEADER = request.getHeader(HEADER_STRING);
 
         // 没有token时不校验token
         if (StringUtils.isEmpty(HEADER) || !HEADER.startsWith(TOKEN_PREFIX) || URI.contains(ERROR_URL)) {
@@ -67,19 +69,12 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     // 解密token
     private UsernamePasswordAuthenticationToken getToken(HttpServletRequest request)
             throws ServiceException {
-        if (null == userDetailsService) {
-            LOG.info("\n获取`userDetailsService` bean 对象");
-            userDetailsService = WebApplicationContextUtils
-                    .getWebApplicationContext(request.getServletContext())
-                    .getBean(UserDetailsService.class);
-        }
-
         final String TOKEN = request.getHeader(HEADER_STRING);
 
         Asserts.notNull(TOKEN, "Token should not be null, please check your code!");
         LOG.info("\n获取请求中的Token：{}", TOKEN);
 
-        final String USER_NAME = JwtUtil.getSubjectFrom(TOKEN);
+        final String USER_NAME = jwtService.getSubjectFrom(TOKEN);
 
         if (!StringUtils.isEmpty(USER_NAME)) {
             // 获取用户信息

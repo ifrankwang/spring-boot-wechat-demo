@@ -29,6 +29,9 @@ public class AppUser implements UserDetails {
     @Column
     @JsonIgnore
     private String gender;
+    @Column(name = "open_id")
+    @JsonIgnore
+    private String openId;
     @Transient
     @JsonIgnore
     private List<GrantedAuthority> authorities;
@@ -85,6 +88,15 @@ public class AppUser implements UserDetails {
 
     public AppUser setGender(String gender) {
         this.gender = gender;
+        return this;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public AppUser setOpenId(String openId) {
+        this.openId = openId;
         return this;
     }
 
