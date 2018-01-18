@@ -1,6 +1,7 @@
 package me.frank.spring.boot.wechat.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,19 +19,25 @@ public class AppUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private long id;
     @Column
     @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private String name;
     @Column
+    @ApiModelProperty(required = true)
     private String username;
     @Column
+    @ApiModelProperty(required = true)
     private String password;
     @Column
     @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private String gender;
     @Column(name = "open_id")
     @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private String openId;
     @Transient
     @JsonIgnore

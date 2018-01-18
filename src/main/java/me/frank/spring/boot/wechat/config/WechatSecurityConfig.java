@@ -42,9 +42,8 @@ public class WechatSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 在此加入不走权限的API地址
-                .antMatchers(NO_AUTH_URL, AUTH_FAILED_URL, LOGIN_URL, WECHAT_API)
-                // TODO 需要打开Swagger-UI的话，注释上面一行代码，并反注释下面一行代码
-                // .anyRequest()
+                .antMatchers(NO_AUTH_URL, AUTH_FAILED_URL, LOGIN_URL, WECHAT_API,
+                             "/swagger**", "/webjars/**", "/v2/**", "/swagger-resources/**")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
