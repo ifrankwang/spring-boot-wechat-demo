@@ -9,7 +9,7 @@ import me.frank.spring.boot.wechat.service.IWechatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static me.frank.spring.boot.wechat.properties.SecurityConst.ERROR_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.AUTH_FAILED_URL;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -60,7 +60,7 @@ public class BaseController {
             produces = APPLICATION_JSON_VALUE,
             value = "异常接口",
             notes = "不做调用，校验Token异常将转向此接口")
-    @PostMapping(value = ERROR_URL)
+    @PostMapping(value = AUTH_FAILED_URL)
     public AppResponse error(@RequestAttribute ServiceException error) {
         return AppResponse.failed(error.getMessage());
     }

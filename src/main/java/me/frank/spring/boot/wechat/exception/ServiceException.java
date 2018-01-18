@@ -9,6 +9,7 @@ public class ServiceException extends RuntimeException {
     public static final ServiceException USER_UNBIND = new ServiceException("用户未绑定微信！");
     public static final ServiceException USER_HAS_BIND = new ServiceException("用户已绑定微信！");
     public static final ServiceException UNSUPPORTED_ENCODING = new ServiceException("不支持的编码方式！");
+    public static final ServiceException INSUFFICIENT_PERMISSION = new ServiceException("权限不足！");
 
     public ServiceException(String message) {
         super(message);

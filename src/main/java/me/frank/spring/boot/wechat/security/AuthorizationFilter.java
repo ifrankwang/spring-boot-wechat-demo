@@ -3,6 +3,7 @@ package me.frank.spring.boot.wechat.security;
 import me.frank.spring.boot.wechat.entity.AppUser;
 import me.frank.spring.boot.wechat.exception.ServiceException;
 import me.frank.spring.boot.wechat.service.IJwtService;
+import me.frank.spring.boot.wechat.util.ServletUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.Asserts;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static me.frank.spring.boot.wechat.exception.ServiceException.INVALID_TOKEN;
+import static me.frank.spring.boot.wechat.exception.ServiceException.USER_UNBIND;
 import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
@@ -46,12 +48,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         LOG.info("\n校验用户访问{}权限...", URI);
 
         // 没有token时不校验token
-        if (StringUtils.isEmpty(HEADER) || !HEADER.startsWith(TOKEN_PREFIX) || URI.contains(ERROR_URL)) {
-            if (StringUtils.isEmpty(HEADER) || !HEADER.startsWith(TOKEN_PREFIX)) {
-                LOG.warn("\n用户请求不包含Token！");
-            }
-            if (URI.contains(ERROR_URL)) {
+        if (StringUtils.isEmpty(HEADER) || !HEADER.startsWith(TOKEN_PREFIX) || URI.contains(AUTH_FAILED_URL)) {
+            if (URI.contains(AUTH_FAILED_URL)) {
                 LOG.warn("\n转向异常接口！");
+            } else {
+                LOG.warn("\n用户请求不包含Token！");
             }
 
             chain.doFilter(request, response);
@@ -59,7 +60,15 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         // 解密token
-        UsernamePasswordAuthenticationToken token = getToken(request);
+        UsernamePasswordAuthenticationToken token;
+
+        try {
+            token = getToken(request);
+        } catch (ServiceException e) {
+            LOG.warn("\n{}", e.getMessage());
+            ServletUtil.goError(request, response, e);
+            return;
+        }
 
         // 设置请求权限
         SecurityContextHolder.getContext().setAuthentication(token);
@@ -81,6 +90,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             LOG.info("Token'{}'有效！属于用户：{}", TOKEN, USER_NAME);
 
             final AppUser USER = (AppUser) userDetailsService.loadUserByUsername(USER_NAME);
+
+            if (StringUtils.isEmpty(USER.getOpenId())) {
+                throw USER_UNBIND;
+            }
+
             request.setAttribute(ATTR_USER, USER);
             return new UsernamePasswordAuthenticationToken(USER_NAME, USER.getPassword(), USER.getAuthorities());
         } else {

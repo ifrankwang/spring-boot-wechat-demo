@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static me.frank.spring.boot.wechat.properties.SecurityConst.ATTR_ERROR;
-import static me.frank.spring.boot.wechat.properties.SecurityConst.ERROR_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.AUTH_FAILED_URL;
 
 public class ServletUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ServletUtil.class);
@@ -31,6 +31,6 @@ public class ServletUtil {
                                HttpServletResponse response,
                                ServiceException exception) {
         request.setAttribute(ATTR_ERROR, exception);
-        forward(request, response, ERROR_URL);
+        forward(request, response, AUTH_FAILED_URL);
     }
 }
