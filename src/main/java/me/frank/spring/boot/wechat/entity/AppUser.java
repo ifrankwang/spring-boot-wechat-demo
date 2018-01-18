@@ -18,7 +18,7 @@ public class AppUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private int id;
+    private long id;
     @Column
     @JsonIgnore
     private String name;
@@ -44,11 +44,11 @@ public class AppUser implements UserDetails {
         this.gender = gender;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public AppUser setId(int id) {
+    public AppUser setId(long id) {
         this.id = id;
         return this;
     }

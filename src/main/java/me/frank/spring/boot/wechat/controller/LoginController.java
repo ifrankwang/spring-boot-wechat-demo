@@ -8,6 +8,8 @@ import me.frank.spring.boot.wechat.entity.AppUser;
 import me.frank.spring.boot.wechat.service.IJwtService;
 import me.frank.spring.boot.wechat.service.ILoginService;
 import me.frank.spring.boot.wechat.service.IWechatService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import static me.frank.spring.boot.wechat.properties.SecurityConst.LOGIN_URL;
 @Api(tags = "登陆相关接口")
 @RestController
 public class LoginController {
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final IWechatService wechatService;
     private final ILoginService loginService;
     private final IJwtService jwtService;

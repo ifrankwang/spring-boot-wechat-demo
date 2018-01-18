@@ -37,7 +37,7 @@ public class WechatSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
                 .and()
                 // 身份校验过滤器
-                .addFilter(new AuthenticationFilter(authenticationManager(), jwtService))
+                .addFilter(new AuthenticationFilter(authenticationManager(), userDetailsService, jwtService))
                 // 权限校验过滤器
                 .addFilter(new AuthorizationFilter(authenticationManager(), userDetailsService, jwtService))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

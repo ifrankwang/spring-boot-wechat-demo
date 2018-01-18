@@ -49,6 +49,7 @@ public class BaseController {
     @ApiOperation(
             produces = APPLICATION_JSON_VALUE,
             value = "获取微信跳转URL",
+            notes = "URL参数应为http://${wechat.page-url-domain}${server.context-path}/index.html#之后的链接",
             response = String.class)
     @GetMapping(value = "/no-auth/get-redirect-url")
     public AppResponse<String> getRedirectUrl(@RequestParam String url) {

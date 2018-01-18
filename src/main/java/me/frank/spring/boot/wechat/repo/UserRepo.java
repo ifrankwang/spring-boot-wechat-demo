@@ -27,7 +27,7 @@ public interface UserRepo extends JpaRepository<AppUser, Integer>, QueryDslPredi
      * @param id 用户id
      * @return 用户信息
      */
-    AppUser findById(int id);
+    AppUser findById(long id);
 
     /**
      * 根据用户名获取用户信息

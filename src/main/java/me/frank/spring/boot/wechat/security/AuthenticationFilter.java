@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.frank.spring.boot.wechat.entity.AppUser;
 import me.frank.spring.boot.wechat.service.IJwtService;
 import me.frank.spring.boot.wechat.util.ServletUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -27,11 +29,14 @@ import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
     private final IJwtService jwtService;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
+                                UserDetailsService userDetailsService,
                                 IJwtService jwtService) {
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
     }
 
@@ -75,14 +80,23 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws IOException, ServletException {
         LOG.info("\n登陆校验成功！校验信息：{}", authResult);
 
-        final AppUser USER = (AppUser) authResult.getPrincipal();
-        final String USERNAME = USER.getUsername();
+        final String USERNAME = ((AppUser) authResult.getPrincipal()).getUsername();
+        final AppUser USER = (AppUser) userDetailsService.loadUserByUsername(USERNAME);
+
+        if (!StringUtils.isEmpty(USER.getOpenId())) {
+            // 用户已绑定微信
+            LOG.warn("\n{}", USER_HAS_BIND.getMessage());
+            ServletUtil.goError(request, response, USER_HAS_BIND);
+            return;
+        }
+
         // 生成token
         final String TOKEN = jwtService.genTokenFor(USERNAME);
 
+        // 请求体、回应体中加入相应参数
         request.setAttribute(ATTR_USER, USER);
-        // 加入回应头中
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + TOKEN);
+
         chain.doFilter(request, response);
     }
 
