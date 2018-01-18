@@ -49,6 +49,14 @@ public class LoginController {
         return AppResponse.success(true);
     }
 
+    @ApiOperation(value = "解绑", notes = "解除用户的微信绑定")
+    @PostMapping("/unbind")
+    public AppResponse<Boolean> unbind(@RequestAttribute AppUser user) {
+        user.setOpenId(null);
+        loginService.saveUserInfo(user);
+        return AppResponse.success(true);
+    }
+
     @ApiOperation(
             value = "更新token",
             notes = "用用户的code换取新token，换取失败，则说明用户未绑定")
