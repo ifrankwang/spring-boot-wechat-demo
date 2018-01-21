@@ -1,23 +1,27 @@
 package me.frank.spring.boot.wechat.config;
 
 import com.google.common.base.Predicate;
-import me.frank.spring.boot.wechat.service.IJwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.ApiKeyVehicle;
-import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.List;
 
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Lists.newArrayList;
 import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_STRING;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.LOGIN_URL;
+import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
  * Swagger2的配置类
@@ -25,12 +29,7 @@ import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_STRING
 @Configuration
 @EnableSwagger2
 public class Swagger2Config {
-    private final IJwtService jwtService;
-
-    @Autowired
-    public Swagger2Config(IJwtService jwtService) {
-        this.jwtService = jwtService;
-    }
+    private final String API_KEY_NAME = "token";
 
     // 创建API监视bean
     @Bean
@@ -38,6 +37,8 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)
+                .securitySchemes(newArrayList(apiKey()))
+                .securityContexts(newArrayList(securityContext()))
                 .select()
                 .paths(paths())
                 .apis(RequestHandlerSelectors.basePackage("me.frank.spring.boot.wechat.controller"))
@@ -56,16 +57,33 @@ public class Swagger2Config {
     // 需要展示或隐藏的API路径
     @SuppressWarnings("all")
     private Predicate<String> paths() {
-        return and(PathSelectors.regex("/.*"),
-                   not(PathSelectors.regex("/error")),
-                   not(PathSelectors.regex("/application.*")));
+        return and(regex("/.*"),
+                   not(regex("/error")),
+                   not(regex("/application.*")));
     }
 
-    // 设置请求token
-    @Bean
-    SecurityConfiguration security() {
-        final String TOKEN = jwtService.genTokenFor("jack");
-        return new SecurityConfiguration(null, null, null, null,
-                                         TOKEN, ApiKeyVehicle.HEADER, HEADER_STRING, ",");
+    private ApiKey apiKey() {
+        return new ApiKey(API_KEY_NAME, HEADER_STRING, "header");
+    }
+
+    @SuppressWarnings("all")
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .forPaths(and(
+                        regex("/.*"),
+                        not(regex("/no-auth/.*")),
+                        not(regex("/wechat/.*")),
+                        not(regex(LOGIN_URL))))
+                .build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope
+                = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return newArrayList(
+                new SecurityReference(API_KEY_NAME, authorizationScopes));
     }
 }

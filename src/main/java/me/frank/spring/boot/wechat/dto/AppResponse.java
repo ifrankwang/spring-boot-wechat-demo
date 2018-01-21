@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class AppResponse<T> {
-    @ApiModelProperty("错误代码")
+    @ApiModelProperty("成功标志")
     private boolean success;
     @ApiModelProperty("错误信息")
     private String message;
