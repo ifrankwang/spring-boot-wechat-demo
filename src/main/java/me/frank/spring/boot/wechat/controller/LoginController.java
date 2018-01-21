@@ -60,8 +60,8 @@ public class LoginController {
     @ApiOperation(
             value = "更新token",
             notes = "用用户的code换取新token，换取失败，则说明用户未绑定")
-    @GetMapping("/no-auth/refresh-token")
-    public AppResponse<Boolean> refreshToken(@RequestParam String code,
+    @GetMapping("/no-auth/refresh-token/{code}")
+    public AppResponse<Boolean> refreshToken(@PathVariable String code,
                                              HttpServletResponse response) {
         final WxMpUser WECHAT_USER = wechatService.getUserByCode(code);
         final String OPEN_ID = WECHAT_USER.getOpenId();
