@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import static me.frank.spring.boot.wechat.properties.SecurityConst.AUTH_FAILED_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -31,7 +31,7 @@ public class BaseController {
             notes = "无需权限<br/>" +
                     "返回数据：Hello world!",
             response = String.class)
-    @RequestMapping(value = "/no-auth/test", method = {POST, GET})
+    @RequestMapping(value = NO_AUTH_URL + "/test", method = {POST, GET})
     public AppResponse<String> noAuthTest() {
         return AppResponse.success("Hello world!");
     }
@@ -42,7 +42,7 @@ public class BaseController {
             notes = "需要权限访问<br/>" +
                     "返回数据：Hello World!",
             response = String.class)
-    @RequestMapping(value = "/test", method = {POST, GET})
+    @RequestMapping(value = API_PREFIX + "/test", method = {POST, GET})
     public AppResponse<String> authTest(@RequestAttribute @ApiIgnore AppUser user) {
         return AppResponse.success("Hello " + user.getUsername() + "!");
     }
@@ -52,7 +52,7 @@ public class BaseController {
             value = "获取微信跳转URL",
             notes = "URL参数应为http://${wechat.page-url-domain}${server.context-path}/index.html#之后的链接",
             response = String.class)
-    @GetMapping(value = "/no-auth/get-redirect-url")
+    @GetMapping(value = NO_AUTH_URL + "/get-redirect-url")
     public AppResponse<String> getRedirectUrl(@RequestParam String url) {
         return AppResponse.success(wechatService.assembleRedirectUrl(url));
     }

@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static me.frank.spring.boot.wechat.properties.SecurityConst.WECHAT_API;
+
 /**
  * @author Binary Wang(https://github.com/binarywang)
  */
 @Api(tags = "微信服务端相交互接口", hidden = true)
 @RestController
-@RequestMapping("/wechat/portal")
+@RequestMapping(WECHAT_API)
 public class WechatController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

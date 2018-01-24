@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_STRING;
-import static me.frank.spring.boot.wechat.properties.SecurityConst.LOGIN_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 
 @Api(tags = "登陆相关接口")
 @RestController
@@ -50,7 +49,7 @@ public class LoginController {
     }
 
     @ApiOperation(value = "解绑", notes = "解除用户的微信绑定")
-    @PostMapping("/unbind")
+    @PostMapping(API_PREFIX + "/unbind")
     public AppResponse<Boolean> unbind(@RequestAttribute AppUser user) {
         user.setOpenId(null);
         loginService.saveUserInfo(user);
@@ -60,7 +59,7 @@ public class LoginController {
     @ApiOperation(
             value = "更新token",
             notes = "用用户的code换取新token，换取失败，则说明用户未绑定")
-    @GetMapping("/no-auth/refresh-token/{code}")
+    @GetMapping(NO_AUTH_URL + "/refresh-token/{code}")
     public AppResponse<Boolean> refreshToken(@PathVariable String code,
                                              HttpServletResponse response) {
         final WxMpUser WECHAT_USER = wechatService.getUserByCode(code);
@@ -68,7 +67,7 @@ public class LoginController {
         final AppUser USER = loginService.findUserByOpenId(OPEN_ID);
         final String TOKEN = jwtService.genTokenFor(USER.getUsername());
 
-        response.setHeader(HEADER_STRING, TOKEN);
+        response.setHeader(HEADER_NAME, TOKEN);
         return AppResponse.success(true);
     }
 }

@@ -19,8 +19,7 @@ import java.util.List;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Lists.newArrayList;
-import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_STRING;
-import static me.frank.spring.boot.wechat.properties.SecurityConst.LOGIN_URL;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
@@ -63,17 +62,18 @@ public class Swagger2Config {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey(API_KEY_NAME, HEADER_STRING, "header");
+        return new ApiKey(API_KEY_NAME, HEADER_NAME, "header");
     }
 
     @SuppressWarnings("all")
     private SecurityContext securityContext() {
+        final String SUFFIX = "/.*";
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
                 .forPaths(and(
-                        regex("/.*"),
-                        not(regex("/no-auth/.*")),
-                        not(regex("/wechat/.*")),
+                        regex(SUFFIX),
+                        not(regex(NO_AUTH_URL + SUFFIX)),
+                        not(regex(WECHAT_API + SUFFIX)),
                         not(regex(LOGIN_URL))))
                 .build();
     }

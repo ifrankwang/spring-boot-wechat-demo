@@ -43,16 +43,12 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain)
             throws IOException, ServletException {
         final String URI = request.getRequestURI();
-        final String HEADER = request.getHeader(HEADER_STRING);
-
-        LOG.info("\n校验用户访问{}权限...", URI);
+        final String HEADER = request.getHeader(HEADER_NAME);
 
         // 没有token时不校验token
         if (StringUtils.isEmpty(HEADER) || !HEADER.startsWith(TOKEN_PREFIX) || URI.contains(AUTH_FAILED_URL)) {
             if (URI.contains(AUTH_FAILED_URL)) {
                 LOG.warn("\n转向异常接口！");
-            } else {
-                LOG.warn("\n用户请求不包含Token！");
             }
 
             chain.doFilter(request, response);
@@ -78,7 +74,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     // 解密token
     private UsernamePasswordAuthenticationToken getToken(HttpServletRequest request)
             throws ServiceException {
-        final String TOKEN = request.getHeader(HEADER_STRING);
+        final String TOKEN = request.getHeader(HEADER_NAME);
 
         Asserts.notNull(TOKEN, "Token should not be null, please check your code!");
         LOG.info("\n获取请求中的Token：{}", TOKEN);

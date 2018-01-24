@@ -95,7 +95,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         // 请求体、回应体中加入相应参数
         request.setAttribute(ATTR_USER, USER);
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX + TOKEN);
+        response.addHeader(HEADER_NAME, TOKEN_PREFIX + TOKEN);
 
         chain.doFilter(request, response);
     }

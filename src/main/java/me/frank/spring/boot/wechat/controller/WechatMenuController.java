@@ -12,6 +12,7 @@ import me.chanjar.weixin.mp.bean.menu.WxMpMenu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static me.frank.spring.boot.wechat.properties.SecurityConst.WECHAT_API;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -21,7 +22,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
  */
 @Api(tags = "微信菜单操作接口")
 @RestController
-@RequestMapping("/wechat/menu")
+@RequestMapping(WECHAT_API + "/menu")
 public class WechatMenuController implements WxMpMenuService {
 
     private final WxMpService wxService;

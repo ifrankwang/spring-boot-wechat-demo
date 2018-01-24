@@ -32,6 +32,7 @@ public class WechatSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        final String SUFFIX = "/**";
         // security的相关配置
         http.cors().and().csrf().disable()
                 // 身份校验过滤器
@@ -42,7 +43,7 @@ public class WechatSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 在此加入不走权限的API地址
-                .antMatchers(NO_AUTH_URL, AUTH_FAILED_URL, LOGIN_URL, WECHAT_API,
+                .antMatchers(NO_AUTH_URL + SUFFIX, AUTH_FAILED_URL, LOGIN_URL, WECHAT_API + SUFFIX,
                              "/swagger**", "/webjars/**", "/v2/**", "/swagger-resources/**")
                 .permitAll()
                 .anyRequest().authenticated()
@@ -50,6 +51,18 @@ public class WechatSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 校验异常处理
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint());
+    }
+
+    @Override
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web) throws Exception {
+        // 静态网页资源不做安全校验
+        web.ignoring().antMatchers("/", "/resources/**", "/static/**",
+                                   "/public/**", "/swagger-ui/**", "/swagger-resources/**",
+                                   "/v2/api-docs/**", "/*.html", "/**/*.html",
+                                   "/**/*.css", "/**/*.js", "/**/*.png",
+                                   "/**/*.jpg", "/**/*.gif", "/**/*.svg",
+                                   "/**/*.ico", "/**/*.ttf", "/**/*.woff",
+                                   "/**/*.otf");
     }
 
     @Override

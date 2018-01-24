@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_STRING;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_NAME;
 
 // 切面方法自动代理
 @EnableAspectJAutoProxy
@@ -41,7 +41,7 @@ public class ApplicationConfig {
                 registry.addMapping("/**")
                         .allowCredentials(true)
                         .allowedOrigins("*")
-                        .allowedHeaders(HEADER_STRING);
+                        .allowedHeaders(HEADER_NAME);
             }
         };
     }
