@@ -7,8 +7,8 @@ import me.frank.spring.boot.wechat.entity.AppUser;
 import me.frank.spring.boot.wechat.exception.ServiceException;
 import me.frank.spring.boot.wechat.service.IWechatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -43,8 +43,9 @@ public class BaseController {
                     "返回数据：Hello World!",
             response = String.class)
     @RequestMapping(value = API_PREFIX + "/test", method = {POST, GET})
-    public AppResponse<String> authTest(@RequestAttribute @ApiIgnore AppUser user) {
-        return AppResponse.success("Hello " + user.getUsername() + "!");
+    public AppResponse<String> authTest(Authentication authentication) {
+        final AppUser USER = (AppUser) authentication.getDetails();
+        return AppResponse.success("Hello " + USER.getUsername() + "!");
     }
 
     @ApiOperation(

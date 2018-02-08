@@ -5,6 +5,9 @@ import me.chanjar.weixin.common.bean.menu.WxMenuRule;
 
 import java.util.List;
 
+/**
+ * 微信菜单类
+ */
 public class WechatMenu {
     private WxMenu menu;
     private WxMenuRule rule;

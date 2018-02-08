@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -56,7 +57,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         // 解密token
-        UsernamePasswordAuthenticationToken token;
+        Authentication token;
 
         try {
             token = getToken(request);
@@ -72,7 +73,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     // 解密token
-    private UsernamePasswordAuthenticationToken getToken(HttpServletRequest request)
+    private Authentication getToken(HttpServletRequest request)
             throws ServiceException {
         final String TOKEN = request.getHeader(HEADER_NAME);
 
@@ -91,8 +92,10 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                 throw USER_UNBIND;
             }
 
-            request.setAttribute(ATTR_USER, USER);
-            return new UsernamePasswordAuthenticationToken(USER_NAME, USER.getPassword(), USER.getAuthorities());
+            final UsernamePasswordAuthenticationToken AUTH =
+                    new UsernamePasswordAuthenticationToken(USER_NAME, USER.getPassword(), USER.getAuthorities());
+            AUTH.setDetails(USER);
+            return AUTH;
         } else {
             LOG.warn("\n{}不是有效的Token！", TOKEN);
             throw INVALID_TOKEN;

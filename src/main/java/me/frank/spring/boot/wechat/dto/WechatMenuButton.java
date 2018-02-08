@@ -3,6 +3,9 @@ package me.frank.spring.boot.wechat.dto;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
 
+/**
+ * 微信菜单按钮类
+ */
 public class WechatMenuButton extends WxMenuButton {
 
     public WechatMenuButton(String name) {

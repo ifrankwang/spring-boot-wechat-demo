@@ -6,6 +6,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
+/**
+ * 微信模板消息类
+ */
 public class TemplateMessageData {
     // 微信接受对象列表
     private List<String> openIds;

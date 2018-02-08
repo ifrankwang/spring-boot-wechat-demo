@@ -16,6 +16,13 @@ import static me.frank.spring.boot.wechat.properties.SecurityConst.AUTH_FAILED_U
 public class ServletUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ServletUtil.class);
 
+    /**
+     * URL转向
+     *
+     * @param request  请求
+     * @param response 回应
+     * @param url      转向地址
+     */
     public static void forward(HttpServletRequest request,
                                HttpServletResponse response,
                                String url) {
@@ -27,6 +34,12 @@ public class ServletUtil {
         }
     }
 
+    /**
+     * 转向异常链接（返回异常信息给用户）
+     * @param request 请求
+     * @param response 回应
+     * @param exception 异常信息
+     */
     public static void goError(HttpServletRequest request,
                                HttpServletResponse response,
                                ServiceException exception) {

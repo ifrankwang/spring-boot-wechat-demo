@@ -11,8 +11,10 @@ import me.frank.spring.boot.wechat.service.IWechatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
@@ -36,23 +38,26 @@ public class LoginController {
 
     @ApiOperation(value = "登录", notes = "登陆即为绑定")
     @PostMapping(LOGIN_URL)
-    public AppResponse<Boolean> bind(@RequestAttribute AppUser user,
+    public AppResponse<Boolean> bind(HttpServletRequest request,
                                      @RequestParam String code) {
+        final AppUser USER = (AppUser) request.getAttribute(ATTR_USER);
+
         // 能到controller层，说明所有校验都通过了
         final WxMpUser WECHAT_USER = wechatService.getUserByCode(code);
         final String OPEN_ID = WECHAT_USER.getOpenId();
 
-        user.setOpenId(OPEN_ID);
-        loginService.saveUserInfo(user);
+        USER.setOpenId(OPEN_ID);
+        loginService.saveUserInfo(USER);
 
         return AppResponse.success(true);
     }
 
     @ApiOperation(value = "解绑", notes = "解除用户的微信绑定")
     @PostMapping(API_PREFIX + "/unbind")
-    public AppResponse<Boolean> unbind(@RequestAttribute AppUser user) {
-        user.setOpenId(null);
-        loginService.saveUserInfo(user);
+    public AppResponse<Boolean> unbind(Authentication authentication) {
+        final AppUser USER = (AppUser) authentication.getDetails();
+        USER.setOpenId(null);
+        loginService.saveUserInfo(USER);
         return AppResponse.success(true);
     }
 
