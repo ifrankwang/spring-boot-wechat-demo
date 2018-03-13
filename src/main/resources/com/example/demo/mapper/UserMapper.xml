@@ -3,7 +3,7 @@
 <!-- MyBatis *Mapper.xml 示例 -->
 <mapper namespace="me.frank.spring.boot.wechat.mapper.UserMapper">
     <!-- 获取所有用户信息 -->
-    <select id="findAll" resultMap="me.frank.spring.boot.wechat.entity.AppUser">
+    <select id="findAll" resultType="appUser">
         SELECT
             `id`,
             `name`,

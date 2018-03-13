@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.Collections;
 
 import static me.frank.spring.boot.wechat.exception.ServiceException.*;
-import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.ATTR_USER;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_NAME;
 
 // 登录时会调用的过滤器
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -95,7 +96,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         // 请求体、回应体中加入相应参数
         request.setAttribute(ATTR_USER, USER);
-        response.addHeader(HEADER_NAME, TOKEN_PREFIX + TOKEN);
+        response.addHeader(HEADER_NAME, TOKEN);
 
         chain.doFilter(request, response);
     }
