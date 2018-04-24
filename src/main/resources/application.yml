@@ -57,7 +57,7 @@ security:
 # 数据库参数
 hikari:
   datasource:
-    jdbc-url: jdbc:mysql://localhost:3306/teset?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    jdbc-url: jdbc:mysql://localhost:3306/test?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
     maximum-pool-size: 30
