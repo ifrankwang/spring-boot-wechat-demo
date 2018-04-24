@@ -2,7 +2,7 @@ package me.frank.spring.boot.wechat.repo;
 
 import me.frank.spring.boot.wechat.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * 会自动根据方法名生成查询sql，
  * 不需要implement
  */
-public interface UserRepo extends JpaRepository<AppUser, Integer>, QueryDslPredicateExecutor<AppUser> {
+public interface UserRepo extends JpaRepository<AppUser, Integer>, QuerydslPredicateExecutor<AppUser> {
 
     /**
      * 根据名称获取用户列表
