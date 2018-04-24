@@ -18,16 +18,13 @@ public class ServletUtil {
 
     /**
      * URL转向
-     *
      * @param request  请求
      * @param response 回应
-     * @param url      转向地址
      */
-    public static void forward(HttpServletRequest request,
-                               HttpServletResponse response,
-                               String url) {
+    private static void forward(HttpServletRequest request,
+                                HttpServletResponse response) {
         try {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(url);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(AUTH_FAILED_URL);
             dispatcher.forward(request, response);
         } catch (ServletException | IOException e) {
             LOG.error("\n页面转向异常！", e);
@@ -44,6 +41,6 @@ public class ServletUtil {
                                HttpServletResponse response,
                                ServiceException exception) {
         request.setAttribute(ATTR_ERROR, exception);
-        forward(request, response, AUTH_FAILED_URL);
+        forward(request, response);
     }
 }
