@@ -1,0 +1,6 @@
+# hikari 数据源的生产环境配置
+hikari:
+  datasource:
+    jdbc-url:
+    username:
+    password:

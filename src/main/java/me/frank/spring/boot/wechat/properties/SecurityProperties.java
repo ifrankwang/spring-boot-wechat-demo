@@ -1,34 +1,13 @@
 package me.frank.spring.boot.wechat.properties;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Data
 @ConfigurationProperties(prefix = "security")
 public class SecurityProperties {
+    // 有效时长
     private long expirationTime;
+    // 加密秘钥
     private String secret;
-
-    public long getExpirationTime() {
-        return expirationTime;
-    }
-
-    public SecurityProperties setExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
-        return this;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public SecurityProperties setSecret(String secret) {
-        this.secret = secret;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
 }

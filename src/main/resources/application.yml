@@ -1,0 +1,78 @@
+debug: true
+
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+    basedir: ./
+    accesslog:
+      enabled: true
+      request-attributes-enabled: true
+  compression:
+    enabled: true
+  servlet:
+    context-path: /spring-boot-wechat-server
+
+spring:
+  application:
+    name: letroom
+  profiles:
+    active: dev
+  jpa:
+    properties:
+      hibernate.enable_lazy_load_no_trans: true
+  output:
+    ansi:
+      enabled: detect
+
+logging:
+  file: ./logs/spring-boot-wechat-demo.log
+  level:
+    me.frank.spring.boot.wechat: debug
+    jdbc.sqlonly: debug
+    jdbc.resultsettable: debug
+    jdbc.audit: error
+    jdbc.resultset: error
+    jdbc.sqltiming: error
+    jdbc.connection: error
+    org.springframework.web.servlet: warn
+    org.springframework.boot.actuate.endpoint.mvc: warn
+    springfox.documentation: warn
+    com.zaxxer.hikari.pool.HikariPool: warn
+    org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener: warn
+    org.springframework.boot.actuate.endpoint.web.servlet.ControllerEndpointHandlerMapping: warn
+    org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping: warn
+    org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter: warn
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:me/frank/spring/boot/wechat/mapper/*Mapper.xml
+  type-aliases-package: me.frank.spring.boot.wechat.entity
+
+# 安全配置
+security:
+  expiration-time: 86400000
+  secret: w%^CK@fMvW1PGk!Ck5!7Ts5XG7S5Z3$^
+
+# 数据库参数
+hikari:
+  datasource:
+    jdbc-url: jdbc:mysql://localhost:3306/teset?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    maximum-pool-size: 30
+    max-lifetime: 1800000
+    minimum-idle: 20
+    idle-timeout: 100000
+    driver-class-name: com.mysql.jdbc.Driver
+
+# 微信小程序参数
+wechat:
+  app-id: wx315b9acdcc481c8b
+  app-secret: 8b7c52a9ef8b34e984471bfeaa99e5c5
+  token: p861E6wJ5!^b
+  aesKey: 111
+  page-url-domain: yh8t76.natappfree.cc
+  page-url-prefix: http://${wechat.page-url-domain}${server.servlet.context-path}/index.html#
+  implicit-code:
+    wxm: ox01QxEjg2GOGILgNk0KWWO41LzI
