@@ -1,9 +1,9 @@
 package me.frank.spring.boot.wechat.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.Data;
 
+@Data
 public class AppResponse<T> {
     @ApiModelProperty("成功标志")
     private boolean success;
@@ -24,34 +24,5 @@ public class AppResponse<T> {
 
     public static <T> AppResponse<T> failed(String message) {
         return new AppResponse<>(false, message, null);
-    }
-
-    public boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
