@@ -1,6 +1,7 @@
 package me.frank.spring.boot.wechat.config;
 
 import com.google.common.base.Predicate;
+import io.swagger.annotations.Api;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -19,7 +20,8 @@ import java.util.List;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Lists.newArrayList;
-import static me.frank.spring.boot.wechat.properties.SecurityConst.*;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_NAME;
+import static me.frank.spring.boot.wechat.properties.SecurityConst.WECHAT_API;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
@@ -40,7 +42,7 @@ public class Swagger2Config {
                 .securityContexts(newArrayList(securityContext()))
                 .select()
                 .paths(paths())
-                .apis(RequestHandlerSelectors.basePackage("me.frank.spring.boot.wechat.controller"))
+                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .build();
     }
 
@@ -67,15 +69,14 @@ public class Swagger2Config {
 
     @SuppressWarnings("all")
     private SecurityContext securityContext() {
-        final String SUFFIX = "/.*";
         return SecurityContext.builder()
-                .securityReferences(defaultAuth())
-                .forPaths(and(
-                        regex(SUFFIX),
-                        not(regex(NO_AUTH_URL + SUFFIX)),
-                        not(regex(WECHAT_API + SUFFIX)),
-                        not(regex(LOGIN_URL))))
-                .build();
+                              .securityReferences(defaultAuth())
+                              .forPaths(and(
+                                      regex("/.*"),
+                                      not(regex(".*/no-auth/.*")),
+                                      not(regex(".*/login/.*")),
+                                      not(regex(WECHAT_API + "/.*"))))
+                              .build();
     }
 
     private List<SecurityReference> defaultAuth() {
