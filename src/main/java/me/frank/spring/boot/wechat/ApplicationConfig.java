@@ -1,31 +1,21 @@
 package me.frank.spring.boot.wechat;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.modelmapper.ModelMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import static me.frank.spring.boot.wechat.properties.SecurityConst.HEADER_NAME;
+import static org.modelmapper.convention.MatchingStrategies.LOOSE;
 
-// 切面方法自动代理
-@EnableAspectJAutoProxy
-// 需要扫描的数据库模型类所在的包
-@EntityScan("me.frank.spring.boot.wechat.entity")
 // MyBatis *Mapper.java 文件扫描
 @MapperScan({"me.frank.spring.boot.wechat.mapper"})
-@PropertySource({
-        "classpath:app-wechat-${spring.profiles.active}.properties",
-        "classpath:app-security.properties"
-})
 @SpringBootApplication
 public class ApplicationConfig {
 
@@ -33,31 +23,38 @@ public class ApplicationConfig {
         SpringApplication.run(ApplicationConfig.class, args);
     }
 
+    // 解决跨域问题
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
+        return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowCredentials(true)
                         .allowedOrigins("*")
-                        .allowedMethods("GET", "POST", "OPTIONS")
+                        .allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")
                         .allowedHeaders(HEADER_NAME, "Content-Type", "X-Requested-With", "accept",
                                         "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers");
             }
         };
     }
 
-    /**
-     * hikari数据源的配置，根据资源文件前缀自动加入参数
-     *
-     * @return hikari数据源
-     */
+    // hikari数据源的配置，根据资源文件前缀自动加入参数
     @Bean
     @ConfigurationProperties(prefix = "hikari.datasource")
     public HikariDataSource dataSource() {
-        return (HikariDataSource) DataSourceBuilder.create()
+        return DataSourceBuilder
+                .create()
                 .type(HikariDataSource.class)
                 .build();
+    }
+
+    // DTO Entity 之间的转型工具
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(LOOSE);
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        return modelMapper;
     }
 }
